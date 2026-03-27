@@ -1,22 +1,16 @@
-MIT License
+Copyright (c) 2026 Y-chen3164553757
+All Rights Reserved.
 
-Copyright (c) 2026 vit-attention-app contributors
-(Refactored from webml-community/attention-visualization)
+1. 权利保留
+本项目的核心架构重构（包括但不限于基于 FastAPI 的后端逻辑、本地化加载机制、前后端交互接口设计等）均为作者原创或重构修改。未经作者事先书面许可，任何人不得将本项目这些原创部分用于商业用途、企业私有化部署或二次分发开源。作者保留在此之上申请软件著作权及相关知识产权的全部权利。
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+2. 第三方开源许可声明 (Third-Party Licenses)
+本项目受前人启发并包含部分开源组件，这些组件的版权归原作者所有，并受其各自的开源协议约束：
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+- 原版代码基础与灵感：webml-community/attention-visualization
+  该部分遵循 MIT License：
+  Copyright (c) webml-community
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction...
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+- 底层模型与结构：DINOv3 (Meta Platforms, Inc. and affiliates)
+  内部包含的 DINOv3 相关代码与模型权重遵循 Meta 的 DINOv3 License Agreement。

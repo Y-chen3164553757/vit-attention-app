@@ -65,9 +65,13 @@ python app.py
 或直接运行：
 ```bash
 
-## 📄 开源协议 (License)
+## 📄 版权说明与开源协议 (License)
 
-本项目继承原项目的开源精神，基于 [MIT License](LICENSE) 开源。
+本项目前端交互与后端 API 架构的重构代码**保留所有权利 (All Rights Reserved)**，未经授权禁止将其直接用于商业用途或其他二次分发。如需商业合作或软著登记参考，请联系作者。
+
+本项目部分代码继承或修改自开源社区，并在使用时遵循其原有协议：
+- 原版灵感与部分可视化参考来源于 Hugging Face Space [webml-community/attention-visualization](https://huggingface.co/spaces/webml-community/attention-visualization)（基于 MIT License）。
+- 模型内置的 DINOv3 代码与权重遵循 Meta [DINOv3 License Agreement](https://github.com/facebookresearch/dinov3/blob/main/LICENSE)。
 uvicorn app:app --host 127.0.0.1 --port 8080 --reload
 ```
 
