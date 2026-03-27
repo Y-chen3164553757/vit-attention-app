@@ -10,11 +10,11 @@
 
 ### 第一步：图像预处理
 
-```
+```text
 原始图片 (任意尺寸) → Resize(512×512) → ToFloat32 → Normalize
 ```
 
-- 输入图片调整为 **512×512**（$16 \times 32 = 512$，与 patch\_size=16 整除对齐）
+- 输入图片调整为 **512×512**（16 × 32 = 512，与 `patch_size=16` 整除对齐）
 - 归一化参数采用 ImageNet 标准：
   - `mean = (0.485, 0.456, 0.406)`
   - `std  = (0.229, 0.224, 0.225)`
@@ -35,15 +35,17 @@ transform = v2.Compose([
 
 ViT 将图片切分为不重叠的 **16×16 像素 patch**：
 
-$$\text{grid\_h} = \frac{512}{16} = 32, \quad \text{grid\_w} = \frac{512}{16} = 32$$
+$$
+\text{grid\_h} = \frac{512}{16} = 32, \quad \text{grid\_w} = \frac{512}{16} = 32
+$$
 
-共 $32 \times 32 = 1024$ 个 patch token。每个 patch 通过 `PatchEmbed` 线性层映射为 **384 维向量**（ViT-S 的隐藏维度 $C = 384$）。
+共 32 × 32 = 1024 个 patch token。每个 patch 通过 `PatchEmbed` 线性层映射为 **384 维向量**（ViT-S 的隐藏维度 C = 384）。
 
 加上模型的特殊 token：
 - **1 个 CLS token**：全局类别聚合标记
 - **4 个 register token**：DINOv3 引入的辅助标记，缓解注意力伪影
 
-总序列长度：$N = 1 + 4 + 1024 = 1029$
+总序列长度：N = 1 + 4 + 1024 = 1029
 
 输入 Transformer 的张量形状：`[1, 1029, 384]`
 
@@ -53,29 +55,37 @@ $$\text{grid\_h} = \frac{512}{16} = 32, \quad \text{grid\_w} = \frac{512}{16} = 
 
 #### 3.1 QKV 线性变换
 
-对输入 $X \in \mathbb{R}^{1 \times 1029 \times 384}$，通过一个联合线性层得到 Q、K、V：
+对输入数据维度为 `[1, 1029, 384]`，通过一个联合线性层得到 Q、K、V：
 
-$$\text{QKV} = X \cdot W_{qkv} \quad \in \mathbb{R}^{1 \times 1029 \times 1152}$$
+$$
+\text{QKV} = X \cdot W_{qkv} \quad \text{维度为 } [1, 1029, 1152]
+$$
 
-其中 $W_{qkv} \in \mathbb{R}^{384 \times 1152}$，$1152 = 384 \times 3$。
+其中权重的维度为 384 × 1152，1152 = 384 × 3。
 
 #### 3.2 拆分为多头
 
 重塑并拆分为 6 个注意力头：
 
-$$\text{QKV} \xrightarrow{\text{reshape}} [1, 1029, 3, 6, 64] \xrightarrow{\text{unbind}} Q, K, V \in \mathbb{R}^{1 \times 6 \times 1029 \times 64}$$
+$$
+\text{QKV} \xrightarrow{\text{reshape}} [1, 1029, 3, 6, 64] \xrightarrow{\text{unbind}} Q, K, V
+$$
 
-每个头的维度 $d_k = 384 / 6 = 64$。
+拆分后 Q, K, V 的维度均为 `[1, 6, 1029, 64]`。每个头的维度 $d_k = \frac{384}{6} = 64$。
 
 对应代码（`model.py` hook 内）：
 
 ```python
 qkv = module.qkv(x).reshape(B, N, 3, module.num_heads, head_dim)
 q, k, v = [t.transpose(1, 2) for t in torch.unbind(qkv, 2)]
-```
+``
+q' = q \cdot \cos(\theta) + \text{rotate\_half}(q) \cdot \sin(\theta)
+$$
+$$
+k' = k \cdot \cos(\theta) + \text{rotate\_half}(k) \cdot \sin(\theta)
+$$
 
-#### 3.3 RoPE 旋转位置编码
-
+其中 `rotate_half` 将向量的前后两半交换并取负：`[x0, x1, x2, x3]` $\to$ `[-x2, -x3, x0, x1]`
 对 Q 和 K 的 **patch token 部分**（跳过前 5 个 prefix token）应用旋转位置编码（Rotary Position Embedding）：
 
 $$q' = q \cdot \cos(\theta) + \text{rotate\_half}(q) \cdot \sin(\theta)$$
@@ -90,9 +100,11 @@ RoPE 为每个 patch 注入了二维空间位置信息，使模型能感知 toke
 ```python
 def rope_apply(x, sin, cos):
     return (x * cos) + (rope_rotate_half(x) * sin)
-```
+``
+A = \text{softmax}\!\left(\frac{Q \cdot K^T}{\sqrt{d_k}}\right) = \text{softmax}\!\left(\frac{Q \cdot K^T}{\sqrt{64}}\right) = \text{softmax}\!\left(\frac{Q \cdot K^T}{8}\right)
+$$
 
-#### 3.4 计算注意力权重矩阵
+最后计算出来的注意力矩阵 $A$ 维度为 `[1, 6, 1029, 1029]`。
 
 $$A = \text{softmax}\!\left(\frac{Q \cdot K^T}{\sqrt{d_k}}\right) = \text{softmax}\!\left(\frac{Q \cdot K^T}{\sqrt{64}}\right) = \text{softmax}\!\left(\frac{Q \cdot K^T}{8}\right)$$
 
@@ -126,19 +138,27 @@ def _attention_hook(self, module, input_args, kwargs, output):
 
 ### 第四步：提取 CLS → Patch 注意力
 
-从完整的 $1029 \times 1029$ 注意力矩阵中，提取第 **0 行**（CLS token）对第 **5~1028 列**（patch token）的注意力值：
+从完
+A_{\text{cls}} = A[:, :, 0, 5:]
+$$
+
+最终获取维度为 `[1, 6, 1024]` 的张量。的注意力值：
 
 $$A_{\text{cls}} = A[:, :, 0, 5:] \quad \in \mathbb{R}^{1 \times 6 \times 1024}$$
 
 - 索引 `0` → CLS token（查询方）
 - 跳过前 5 列（1 CLS + 4 registers），只保留 1024 个 patch 的注意力值
-- **物理含义**：每个值表示 CLS token 对对应图像区域的"关注程度"
+- 
+A_{\text{cls}} \xrightarrow{\text{reshape}} [6, 32, 32]
+$$
 
-### 第五步：重塑为 2D 空间图
+每个位置 `(i, j)` 对应原图中第 `(i, j)` 个 16×16 patch 区域的注意力强度。
 
-将 1024 个 patch 的一维注意力值还原为二维空间布局：
+### 第六步：上采样
 
-$$A_{\text{cls}} \xrightarrow{\text{reshape}} [6, 32, 32]$$
+$$
+[6, 32, 32] \xrightarrow{\text{nearest interpolate}} [6, 256, 256]
+
 
 每个位置 $(i, j)$ 对应原图中第 $(i, j)$ 个 16×16 patch 区域的注意力强度。
 
@@ -152,9 +172,11 @@ $$[6, 32, 32] \xrightarrow{\text{nearest interpolate}} [6, 256, 256]$$
 
 ```python
 attn_up = F.interpolate(
-    attn.unsqueeze(0),
-    size=(OUTPUT_SIZE, OUTPUT_SIZE),
-    mode="nearest",
+    attn.unsqu`[0, 1]`：
+
+$$
+A_h^{\text{norm}} = \frac{A_h - \min(A_h)}{\max(A_h) - \min(A_h) + \epsilon}
+
 )[0]  # [heads, 256, 256]
 ```
 
@@ -171,16 +193,18 @@ $$A_h^{\text{norm}} = \frac{A_h - \min(A_h)}{\max(A_h) - \min(A_h) + \epsilon}$$
 ```python
 for h in range(NUM_HEADS):
     a = attn_up[h]
-    lo, hi = a.min(), a.max()
-    attn_up[h] = (a - lo) / (hi - lo + 1e-8)
-```
+    lo, h`[0, 1]` 灰度值转为 **PNG 灰度图**，以 base64 编码传给前端。
 
-### 第八步：前端着色与混合
+前端 (`app.js`) 使用 **Viridis 色图**将灰度值映射为伪彩色，并与原图按用户设定的透明度叠加：
 
-后端将归一化后的 $[0, 1]$ 灰度值转为 **PNG 灰度图**，以 base64 编码传给前端。
+$$
+\text{pixel}_{\text{out}} = \text{original} \times (1 - \alpha) + \text{viridis}(v) \times \alpha
+$$
 
-前端 (`app.js`) 使用 **Viridis 色图**将灰度值映射为伪彩色，并与原图按用户设定的透明度 $\alpha$ 混合：
-
+Viridis 色图的映射范围：
+- `v = 0` → 深紫色 `rgb(68, 1, 84)`
+- `v = 0.5` → 青绿色 `rgb(34, 167, 132)`
+- `v = 1`
 $$\text{pixel}_{\text{out}} = \text{original} \times (1 - \alpha) + \text{viridis}(v) \times \alpha$$
 
 Viridis 色图的映射范围：
