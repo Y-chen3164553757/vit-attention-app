@@ -1,0 +1,16 @@
+# DINOv3 ViT Attention Visualizer
+# Python >=3.11
+
+# --- Web framework ---
+fastapi==0.135.2
+uvicorn[standard]==0.42.0
+jinja2==3.1.6
+python-multipart==0.0.22
+
+# --- Deep learning ---
+torch==2.10.0
+torchvision==0.25.0
+
+# --- Image / numeric ---
+Pillow==12.0.0
+numpy==2.3.5

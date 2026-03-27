@@ -1,0 +1,284 @@
+/* ===== Reset & Base ===== */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+html, body {
+    height: 100%;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: #040b1b;
+    color: #e0e0e0;
+    overflow: hidden;
+}
+
+/* ===== Full-screen Scene ===== */
+.scene-container {
+    position: fixed;
+    inset: 0;
+    bottom: 48px;          /* 给底栏留空 */
+}
+
+#canvas3d {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* ===== Upload Overlay (left side) ===== */
+.upload-overlay {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 20;
+}
+
+.upload-drop {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: 1.5px dashed rgba(255,255,255,0.25);
+    border-radius: 10px;
+    background: rgba(4,11,27,0.7);
+    backdrop-filter: blur(8px);
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.upload-drop:hover,
+.upload-drop.drag-over {
+    border-color: #74b9ff;
+    color: #74b9ff;
+    background: rgba(4,11,27,0.9);
+}
+
+.upload-drop svg {
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+/* ===== Info Badge (top-left, below upload) ===== */
+.info-badge {
+    position: absolute;
+    top: 68px;
+    left: 16px;
+    z-index: 20;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background: rgba(4,11,27,0.7);
+    backdrop-filter: blur(8px);
+    font-size: 13px;
+    color: #74b9ff;
+    font-weight: 600;
+    pointer-events: none;
+}
+
+/* ===== Loading Overlay ===== */
+.loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 11, 27, 0.85);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #1a2744;
+    border-top-color: #74b9ff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 16px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 14px;
+    color: #8899aa;
+}
+
+/* ===== Scene Hint ===== */
+.scene-hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.scene-hint p {
+    font-size: 18px;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 1px;
+}
+
+/* ===== Bottom Control Bar ===== */
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 48px;
+    background: rgba(10, 18, 36, 0.92);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 0;
+    z-index: 40;
+    overflow-x: auto;
+}
+
+.bar-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    flex-shrink: 0;
+}
+
+.bar-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    white-space: nowrap;
+    user-select: none;
+}
+
+.bar-label em {
+    color: #74b9ff;
+    font-style: normal;
+    font-weight: 600;
+}
+
+.bar-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(255,255,255,0.1);
+    flex-shrink: 0;
+}
+
+/* Toggle Group */
+.toggle-group {
+    display: flex;
+    background: rgba(255,255,255,0.06);
+    border-radius: 6px;
+    padding: 2px;
+}
+
+.toggle-btn {
+    padding: 4px 12px;
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.toggle-btn:hover {
+    color: rgba(255,255,255,0.7);
+}
+
+.toggle-btn.active {
+    background: rgba(116, 185, 255, 0.2);
+    color: #74b9ff;
+}
+
+.toggle-btn[data-view] {
+    min-width: 36px;
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Sliders */
+.slider {
+    width: 100px;
+    height: 3px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(255,255,255,0.12);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background: #74b9ff;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(116, 185, 255, 0.5);
+}
+
+.slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: #74b9ff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.slider::-moz-range-track {
+    height: 3px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 2px;
+}
+
+/* Brand area */
+.bar-brand {
+    margin-left: auto;
+    gap: 16px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.25);
+}
+
+.bar-brand a {
+    color: rgba(116, 185, 255, 0.6);
+    text-decoration: none;
+}
+
+.bar-brand a:hover {
+    color: #74b9ff;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+    .bottom-bar {
+        padding: 0 8px;
+    }
+    .bar-group {
+        padding: 0 6px;
+    }
+    .slider {
+        width: 70px;
+    }
+    .bar-brand {
+        display: none;
+    }
+}

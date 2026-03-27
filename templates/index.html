@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DINOv3 ViT Attention Visualizer</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body>
+    <!-- 全屏 3D 场景 -->
+    <div class="scene-container">
+        <canvas id="canvas3d"></canvas>
+
+        <!-- 上传触发区域（场景内左侧悬浮） -->
+        <div class="upload-overlay" id="uploadOverlay">
+            <input type="file" id="fileInput" accept="image/*" hidden>
+            <div class="upload-drop" id="uploadZone">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <span>拖放或点击上传</span>
+            </div>
+        </div>
+
+        <!-- 悬浮信息（左上角） -->
+        <div class="info-badge" id="infoBadge" hidden>
+            <span id="infoText">—</span>
+        </div>
+
+        <!-- 加载蒙层 -->
+        <div class="loading-overlay" id="loadingOverlay" hidden>
+            <div class="spinner"></div>
+            <p class="loading-text">正在分析注意力模式<span class="dots"></span></p>
+        </div>
+
+        <!-- 空状态提示 -->
+        <div class="scene-hint" id="sceneHint">
+            <p>上传图片开始可视化</p>
+        </div>
+    </div>
+
+    <!-- 底部控制栏 -->
+    <div class="bottom-bar">
+        <div class="bar-group">
+            <span class="bar-label">视图</span>
+            <div class="toggle-group">
+                <button class="toggle-btn active" data-view="3d" id="view3dBtn">3D</button>
+                <button class="toggle-btn" data-view="2d" id="view2dBtn">2D</button>
+            </div>
+        </div>
+
+        <div class="bar-divider"></div>
+
+        <div class="bar-group">
+            <span class="bar-label">配色</span>
+            <div class="toggle-group">
+                <button class="toggle-btn active" data-mode="heatmap">热力图</button>
+                <button class="toggle-btn" data-mode="grayscale">灰度图</button>
+            </div>
+        </div>
+
+        <div class="bar-divider"></div>
+
+        <div class="bar-group">
+            <span class="bar-label">Layer <em id="layerValue">All</em></span>
+            <input type="range" id="layerSlider" class="slider" min="-1" max="11" value="-1">
+        </div>
+
+        <div class="bar-divider"></div>
+
+        <div class="bar-group">
+            <span class="bar-label">Head <em id="headValue">All</em></span>
+            <input type="range" id="headSlider" class="slider" min="-1" max="5" value="-1">
+        </div>
+
+        <div class="bar-divider"></div>
+
+        <div class="bar-group">
+            <span class="bar-label">透明度 <em id="opacityValue">1.0</em></span>
+            <input type="range" id="opacitySlider" class="slider" min="0" max="100" value="100">
+        </div>
+
+        <div class="bar-divider"></div>
+
+        <div class="bar-group bar-brand">
+            <span>🦖 DINOv3 ViT-S/16</span>
+            <a href="https://github.com/facebookresearch/dinov3" target="_blank" rel="noopener">GitHub ↗</a>
+        </div>
+    </div>
+
+    <script type="module" src="/static/js/app.js?v=4"></script>
+</body>
+</html>
