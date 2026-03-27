@@ -87,6 +87,6 @@ uvicorn app:app --host 127.0.0.1 --port 8080 --reload
 
 ## 📝 技术细节
 
-关于 Attention 提取的核心逻辑：通过注册 `register_forward_hook` 在每层 SelfAttention 上拦截输入，手动利用 $Q$ 和 $K$ 计算 $\text{softmax}(Q \cdot K^T / \sqrt{d})$，以此提取 CLS token 对于各个 Patch 的注意力权重，并在后续放大为可视化热力图。
+关于 Attention 提取的核心逻辑：通过注册 `register_forward_hook` 在每层 SelfAttention 上拦截输入，手动利用 $Q$ 和 $K$ 计算 $\text{softmax}\left(\frac{Q \cdot K^T}{\sqrt{d}}\right)$，以此提取 CLS token 对于各个 Patch 的注意力权重，并在后续放大为可视化热力图。
 
 更多详细理论和数学推导请参阅 [ATTENTION_EXTRACTION.md](ATTENTION_EXTRACTION.md)。
