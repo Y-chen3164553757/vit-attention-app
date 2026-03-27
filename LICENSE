@@ -1,16 +1,61 @@
 Copyright (c) 2026 Y-chen3164553757
 All Rights Reserved.
 
-1. 权利保留
-本项目的核心架构重构（包括但不限于基于 FastAPI 的后端逻辑、本地化加载机制、前后端交互接口设计等）均为作者原创或重构修改。未经作者事先书面许可，任何人不得将本项目这些原创部分用于商业用途、企业私有化部署或二次分发开源。作者保留在此之上申请软件著作权及相关知识产权的全部权利。
+================================================================================
+                        ViT Attention Visualizer 许可协议
+================================================================================
 
-2. 第三方开源许可声明 (Third-Party Licenses)
-本项目受前人启发并包含部分开源组件，这些组件的版权归原作者所有，并受其各自的开源协议约束：
+一、原创部分 — 保留所有权利
 
-- 原版代码基础与灵感：webml-community/attention-visualization
-  该部分遵循 MIT License：
-  Copyright (c) webml-community
-  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction...
+本项目中以下部分为作者原创或深度重构，版权归作者所有，保留一切权利：
 
-- 底层模型与结构：DINOv3 (Meta Platforms, Inc. and affiliates)
-  内部包含的 DINOv3 相关代码与模型权重遵循 Meta 的 DINOv3 License Agreement。
+  - 基于 FastAPI 的后端服务架构与 API 接口设计
+  - 前端交互界面（含 3D/2D 注意力可视化场景）
+  - 本地化模型权重加载机制
+  - Attention Hook 提取与后处理流程封装
+  - 项目整体工程组织结构
+
+未经作者事先书面许可，任何个人或组织不得将上述原创部分用于：
+  (a) 商业用途或盈利性产品
+  (b) 企业内部私有化部署
+  (c) 二次打包分发或转载发布
+
+作者保留基于本项目申请软件著作权及其他知识产权的全部权利。
+
+二、允许的使用方式
+
+在保留本许可声明完整且注明出处的前提下，以下行为被允许：
+  - 个人学习、研究与教学用途
+  - 在学术论文或报告中引用本项目（需注明仓库地址）
+  - Fork 本仓库用于非商业的个人改进
+
+三、第三方开源许可声明 (Third-Party Licenses)
+
+本项目受前人启发并包含部分第三方开源组件，这些组件的版权归原作者所有，
+使用时须同时遵守其各自的开源协议：
+
+  1. webml-community/attention-visualization
+     协议：MIT License
+     来源：https://huggingface.co/spaces/webml-community/attention-visualization
+     Copyright (c) webml-community
+     Permission is hereby granted, free of charge, to any person obtaining
+     a copy of this software and associated documentation files (the
+     "Software"), to deal in the Software without restriction, including
+     without limitation the rights to use, copy, modify, merge, publish,
+     distribute, sublicense, and/or sell copies of the Software, and to
+     permit persons to whom the Software is furnished to do so, subject to
+     the following conditions:
+     The above copyright notice and this permission notice shall be
+     included in all copies or substantial portions of the Software.
+
+  2. DINOv3 — Meta Platforms, Inc. and affiliates
+     协议：DINOv3 License Agreement
+     来源：https://github.com/facebookresearch/dinov3
+     本项目内置的 dinov3/ 目录下的模型代码与预训练权重遵循 Meta 发布的
+     DINOv3 License Agreement，详细条款请参阅原仓库。
+
+四、免责声明
+
+本软件按"原样"提供，不附带任何明示或暗示的担保，包括但不限于对适销性、
+特定用途适用性和非侵权性的担保。在任何情况下，作者均不对因使用本软件而
+产生的任何直接、间接、偶然、特殊或后果性损害承担责任。
