@@ -5,7 +5,9 @@
 ## 🔄 鸣谢与重构说明 (Acknowledgments)
 
 本项目是 Hugging Face Space [webml-community/attention-visualization](https://huggingface.co/spaces/webml-community/attention-visualization) 的重构与优化版本。
-原项目基于 **MIT License** 开源。我们在原版的基础上针对模型与后端架构进行了大幅修改：
+原项目基于 **MIT License** 开源。同时，本项目底层的强大视觉特征提取能力由 Meta AI 团队开源的 [DINOv3](https://github.com/facebookresearch/dinov3) 驱动。
+
+我们在原版的基础上针对模型与后端架构进行了以下大幅修改：
 
 - **模型升级**：将原始的可视化模型替换为了拥有更强特征提取能力的 **DINOv3 (ViT-S/16)**。
 - **架构重构**：引入了 **FastAPI** 作为后端支撑，提升了 API 接口的速度和稳定性。
