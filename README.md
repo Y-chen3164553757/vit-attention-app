@@ -2,6 +2,16 @@
 
 这是一个基于 FastAPI 和 DINOv3 (ViT-S/16) 的自注意力机制 (Self-Attention) 可视化 Web 应用。它可以帮助你直观地观察 Vision Transformer 每一层、每一个 Attention Head 是如何关注图像的不同区域的。
 
+## 🔄 鸣谢与重构说明 (Acknowledgments)
+
+本项目是 Hugging Face Space [webml-community/attention-visualization](https://huggingface.co/spaces/webml-community/attention-visualization) 的重构与优化版本。
+原项目基于 **MIT License** 开源。我们在原版的基础上针对模型与后端架构进行了大幅修改：
+
+- **模型升级**：将原始的可视化模型替换为了拥有更强特征提取能力的 **DINOv3 (ViT-S/16)**。
+- **架构重构**：引入了 **FastAPI** 作为后端支撑，提升了 API 接口的速度和稳定性。
+- **加载优化**：实现了权重的**完全本地化加载**机制，避免了运行时不可控的在线下载以及 Torch Hub 缓存冲突问题。
+- **代码精简**：去除了原模型中大量无需使用的冗余代码，并重新封装了清晰的 Attention 提取 Hook 逻辑。
+
 ## 🌟 功能特性
 
 - **轻量级前端交互**：通过直观的 Web UI 上传图片，支持点击、拖拽操作。
@@ -54,6 +64,10 @@ python app.py
 ```
 或直接运行：
 ```bash
+
+## 📄 开源协议 (License)
+
+本项目继承原项目的开源精神，基于 [MIT License](LICENSE) 开源。
 uvicorn app:app --host 127.0.0.1 --port 8080 --reload
 ```
 
