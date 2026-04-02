@@ -1,7 +1,7 @@
 /**
  * 主交互模块 — 上传、API 通信、纹理生成、控件绑定
  */
-import { AttentionScene } from './scene.js?v=4';
+import { AttentionScene } from './scene.js?v=5';
 
 /* ═══════════ Viridis 色图 ═══════════ */
 const VIRIDIS_STOPS = [
@@ -106,8 +106,10 @@ async function handleFile(file) {
     if (!file || !file.type.startsWith('image/')) return;
 
     // 加载中
-    document.getElementById('loadingOverlay').hidden = false;
-    document.getElementById('sceneHint').hidden = true;
+    const overlay = document.getElementById('loadingOverlay');
+    const hint = document.getElementById('sceneHint');
+    if (overlay) overlay.hidden = false;
+    if (hint) hint.hidden = true;
 
     const form = new FormData();
     form.append('file', file);
@@ -134,7 +136,8 @@ async function handleFile(file) {
         console.error('Analysis failed:', err);
         alert('分析失败: ' + err.message);
     } finally {
-        document.getElementById('loadingOverlay').hidden = true;
+        const ov = document.getElementById('loadingOverlay');
+        if (ov) ov.hidden = true;
     }
 }
 

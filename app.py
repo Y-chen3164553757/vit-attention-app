@@ -36,6 +36,9 @@ async def lifespan(app: FastAPI):
     yield
 
 
+import time
+STATIC_VERSION = str(int(time.time()))
+
 app = FastAPI(title="DINOv3 Attention Visualizer", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
@@ -43,7 +46,10 @@ templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    response = templates.TemplateResponse(request=request, name="index.html")
+    response = templates.TemplateResponse(
+        request=request, name="index.html",
+        context={"v": STATIC_VERSION}
+    )
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
     response.headers["Pragma"] = "no-cache"
     return response
