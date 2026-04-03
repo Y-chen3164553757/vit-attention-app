@@ -1,5 +1,7 @@
 # DINOv3 ViT 注意力特征图提取原理
 
+> 🌐 Language / 语言：**中文** | [English](ATTENTION_EXTRACTION_EN.md)
+
 ## 概述
 
 本项目从 DINOv3 ViT-S/16 模型中提取 **CLS token 对图像各区域的注意力权重**，将其可视化为热力图。模型共 12 层、每层 6 个注意力头，最终生成 **72 张注意力特征图**。
