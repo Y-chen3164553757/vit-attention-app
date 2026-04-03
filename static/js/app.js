@@ -1,7 +1,7 @@
 /**
  * 主交互模块 — 上传、API 通信、纹理生成、控件绑定
  */
-import { AttentionScene } from './scene.js?v=5';
+import { AttentionScene } from './scene.js';
 
 /* ═══════════ Viridis 色图 ═══════════ */
 const VIRIDIS_STOPS = [
