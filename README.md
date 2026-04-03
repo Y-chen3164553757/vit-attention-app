@@ -1,5 +1,7 @@
 # ViT Attention Visualizer
 
+> 🌐 Language / 语言：**中文** | [English](README_EN.md)
+
 这是一个基于 FastAPI 和 DINOv3 (ViT-S/16) 的自注意力机制 (Self-Attention) 可视化 Web 应用。它可以帮助你直观地观察 Vision Transformer 每一层、每一个 Attention Head 是如何关注图像的不同区域的。
 
 ## 🔄 鸣谢与重构说明 (Acknowledgments)

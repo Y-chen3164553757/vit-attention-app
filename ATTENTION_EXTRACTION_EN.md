@@ -1,5 +1,7 @@
 # DINOv3 ViT Attention Map Extraction — How It Works
 
+> 🌐 Language / 语言：[中文](ATTENTION_EXTRACTION.md) | **English**
+
 ## Overview
 
 This project extracts the **attention weights of the CLS token over all image regions** from a DINOv3 ViT-S/16 model and visualizes them as heatmaps. The model has 12 layers and 6 attention heads per layer, producing **72 attention maps** in total.
