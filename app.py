@@ -11,7 +11,6 @@ from pathlib import Path
 import numpy as np
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from PIL import Image
 from starlette.requests import Request
@@ -21,7 +20,19 @@ from model import get_extractor, OUTPUT_SIZE
 
 DEFAULT_IMAGE = Path(__file__).resolve().parent / "default.jpg"
 
-logging.basicConfig(level=logging.INFO)
+# 日志格式：时间 | 级别 | 模块 | 行号 | 消息
+_LOG_FORMAT = "%(asctime)s | %(levelname)-8s | %(name)s:%(lineno)d | %(message)s"
+_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+_file_handler = logging.FileHandler("app.log", encoding="utf-8", mode="a")
+_file_handler.setLevel(logging.DEBUG)
+_file_handler.setFormatter(logging.Formatter(_LOG_FORMAT, datefmt=_DATE_FORMAT))
+
+_console_handler = logging.StreamHandler()
+_console_handler.setLevel(logging.INFO)
+_console_handler.setFormatter(logging.Formatter(_LOG_FORMAT, datefmt=_DATE_FORMAT))
+
+logging.basicConfig(level=logging.DEBUG, handlers=[_file_handler, _console_handler])
 logger = logging.getLogger(__name__)
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -37,10 +48,50 @@ async def lifespan(app: FastAPI):
 
 
 import time
+from starlette.middleware.base import BaseHTTPMiddleware
+
 STATIC_VERSION = str(int(time.time()))
 
 app = FastAPI(title="DINOv3 Attention Visualizer", lifespan=lifespan)
-app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
+
+
+class NoCacheMiddleware(BaseHTTPMiddleware):
+    """对所有响应强制禁用浏览器缓存"""
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        return response
+
+
+from starlette.staticfiles import StaticFiles as _StaticFiles
+
+_NO_CACHE_HEADERS = [
+    (b"cache-control", b"no-store, no-cache, must-revalidate"),
+    (b"pragma", b"no-cache"),
+    (b"expires", b"0"),
+]
+_NO_CACHE_KEYS = {b"cache-control", b"pragma", b"expires"}
+
+
+class NoCacheStaticFiles(_StaticFiles):
+    """覆盖 StaticFiles，对每个静态资源响应注入禁缓存头"""
+    async def __call__(self, scope, receive, send):
+        async def send_with_no_cache(message):
+            if message["type"] == "http.response.start":
+                # 过滤掉原有缓存相关头，再注入禁缓存头
+                filtered = [
+                    (k, v) for k, v in message.get("headers", [])
+                    if k.lower() not in _NO_CACHE_KEYS
+                ]
+                message["headers"] = filtered + _NO_CACHE_HEADERS
+            await send(message)
+        await super().__call__(scope, receive, send_with_no_cache)
+
+
+app.add_middleware(NoCacheMiddleware)
+app.mount("/static", NoCacheStaticFiles(directory=str(BASE_DIR / "static")), name="static")
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 
@@ -59,18 +110,37 @@ async def index(request: Request):
 async def default_image():
     """返回默认预览图片"""
     if DEFAULT_IMAGE.exists():
-        return FileResponse(str(DEFAULT_IMAGE), media_type="image/jpeg")
+        return FileResponse(
+            str(DEFAULT_IMAGE),
+            media_type="image/jpeg",
+            headers={
+                "Cache-Control": "no-store, no-cache, must-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0",
+            },
+        )
     return {"error": "default.jpg not found"}
 
 
 @app.post("/api/analyze")
 async def analyze(file: UploadFile = File(...)):
     """接收上传图片，返回注意力图数据 (base64 PNG)"""
-    contents = await file.read()
-    image = Image.open(io.BytesIO(contents)).convert("RGB")
+    logger.info("analyze request: filename=%s content_type=%s", file.filename, file.content_type)
+    try:
+        contents = await file.read()
+        logger.debug("read %d bytes from upload", len(contents))
+        image = Image.open(io.BytesIO(contents)).convert("RGB")
+        logger.debug("image size=%s", image.size)
+    except Exception:
+        logger.exception("Failed to read/decode uploaded image")
+        raise
 
-    extractor = get_extractor()
-    result = extractor.extract(image)
+    try:
+        extractor = get_extractor()
+        result = extractor.extract(image)
+    except Exception:
+        logger.exception("Model inference failed")
+        raise
 
     img_size = OUTPUT_SIZE
 
@@ -96,6 +166,7 @@ async def analyze(file: UploadFile = File(...)):
     thumb.save(buf, format="PNG")
     original_b64 = base64.b64encode(buf.getvalue()).decode("ascii")
 
+    logger.info("analyze done: layers=%d", len(result["attentions"]))
     return {
         "attentions": attention_data,
         "original_image": original_b64,
@@ -105,4 +176,10 @@ async def analyze(file: UploadFile = File(...)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app:app", host="127.0.0.1", port=8080, reload=True)
+    uvicorn.run(
+        "app:app",
+        host="127.0.0.1",
+        port=8080,
+        reload=True,
+        reload_excludes=["*.log", "*.pth"],
+    )
