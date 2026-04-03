@@ -18,7 +18,7 @@
 
 ## 🌟 功能特性
 
-<video src="images/（VIT）Cap 2026-04-03 at 16.24.04.mp4" controls width="100%"></video>
+<video src="https://github.com/user-attachments/assets/2a21271e-1cb4-43ad-9209-96a782553065" controls width="100%"></video>
 
 - **轻量级前端交互**：通过直观的 Web UI 上传图片，支持点击、拖拽操作。
 - **逐层/逐头注意力可视化**：自动提取 ViT 中的所有 Head 注意力热力图，并在前端进行渲染展示。
