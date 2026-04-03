@@ -5,6 +5,7 @@ FastAPI 应用: DINOv3 ViT Attention Visualizer
 import base64
 import io
 import logging
+import mimetypes
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -36,6 +37,11 @@ logging.basicConfig(level=logging.DEBUG, handlers=[_file_handler, _console_handl
 logger = logging.getLogger(__name__)
 
 BASE_DIR = Path(__file__).resolve().parent
+
+# Windows 上 .js 可能被系统注册为 text/plain，导致 module script 加载失败。
+mimetypes.add_type("application/javascript", ".js")
+mimetypes.add_type("application/javascript", ".mjs")
+mimetypes.add_type("application/wasm", ".wasm")
 
 
 @asynccontextmanager
