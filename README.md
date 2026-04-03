@@ -97,4 +97,4 @@ $$
 
 以此提取 CLS token 对于各个 Patch 的注意力权重，并在后续放大为可视化热力图。
 
-更多详细理论和数学推导请参阅 [ATTENTION_EXTRACTION.md](ATTENTION_EXTRACTION.md)。
+更多详细理论和数学推导请参阅 [ATTENTION_EXTRACTION_EN.md](ATTENTION_EXTRACTION_EN.md)。
