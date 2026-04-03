@@ -9,6 +9,10 @@ import mimetypes
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+# Fix Windows registry MIME type issues for JS/CSS module scripts
+mimetypes.add_type("application/javascript", ".js")
+mimetypes.add_type("text/css", ".css")
+
 import numpy as np
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import HTMLResponse
@@ -187,5 +191,4 @@ if __name__ == "__main__":
         host="127.0.0.1",
         port=8080,
         reload=True,
-        reload_excludes=["*.log", "*.pth"],
     )
