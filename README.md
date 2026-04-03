@@ -18,11 +18,7 @@
 
 ## 🌟 功能特性
 
-![3D Preview](images/preview-3d.png)
-*3D 交互视角下的逐层逐头 Attention 热力图堆叠展示。*
-
-![2D Preview](images/preview-2d.png)
-*2D 平铺视角下全局 Attention Head 展示矩阵。*
+<video src="images/（VIT）Cap 2026-04-03 at 16.24.04.mp4" controls width="100%"></video>
 
 - **轻量级前端交互**：通过直观的 Web UI 上传图片，支持点击、拖拽操作。
 - **逐层/逐头注意力可视化**：自动提取 ViT 中的所有 Head 注意力热力图，并在前端进行渲染展示。
