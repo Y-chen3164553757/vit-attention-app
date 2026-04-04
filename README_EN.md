@@ -36,7 +36,7 @@ vit-attention-app/
 ├── app.py                     # FastAPI backend entry point and route definitions
 ├── model.py                   # Model loading and Attention extraction module (contains core hook logic)
 ├── requirements.txt           # Project dependencies
-├── ATTENTION_EXTRACTION.md    # Detailed explanation of attention extraction principles
+├── ATTENTION_EXTRACTION_EN.md # Detailed explanation of attention extraction principles
 ├── dinov3/                    # Bundled local DINOv3 library (modified from official, redundant code removed)
 ├── static/                    # Static assets (CSS, JS)
 ├── templates/                 # HTML templates
@@ -99,4 +99,4 @@ $$
 
 This extracts the attention weights of the CLS token over each Patch, which are then upsampled into visualization heatmaps.
 
-For more detailed theory and mathematical derivations, refer to [ATTENTION_EXTRACTION.md](ATTENTION_EXTRACTION.md).
+For more detailed theory and mathematical derivations, refer to [ATTENTION_EXTRACTION_EN.md](ATTENTION_EXTRACTION_EN.md).
