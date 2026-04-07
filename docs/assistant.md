@@ -47,7 +47,7 @@ The assistant is an AI-powered coding helper that can answer technical questions
 - Explain concepts such as ViT self-attention, DINOv3, FastAPI, and related topics
 - **Create Pull Requests and commit changes to the repository when explicitly requested by the user**
 
-### What it will NOT do?
+### What it will NOT do
 
 - ❌ **Replace human code review**: All suggestions provided by the assistant must be evaluated and verified by the developer. They do not constitute final decisions.
 - ❌ **Automatically write to the repository**: The assistant will not modify, commit, or push any code unless the user explicitly asks it to "create a PR" or "submit changes."
