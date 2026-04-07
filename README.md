@@ -33,6 +33,8 @@ vit-attention-app/
 ├── model.py                   # 模型加载与 Attention 提取模块 (包含钩子核心逻辑)
 ├── requirements.txt           # 项目依赖
 ├── ATTENTION_EXTRACTION.md    # 注意力提取的详细原理解释
+├── docs/
+│   └── overview-and-copyright.md  # 项目概述与软著申请指南（面向非技术人员）
 ├── dinov3/                    # 内置 DINOv3 本地库 (从官方修改去除了冗余代码)
 ├── static/                    # 静态资源 (CSS, JS)
 ├── templates/                 # 网页 HTML 模板
@@ -94,3 +96,9 @@ $$
 以此提取 CLS token 对于各个 Patch 的注意力权重，并在后续放大为可视化热力图。
 
 更多详细理论和数学推导请参阅 [ATTENTION_EXTRACTION.md](ATTENTION_EXTRACTION.md)。
+
+## 📋 项目概述与软著申请指南
+
+如需了解本项目的功能说明、应用场景、与同类工具对比亮点，以及**计算机软件著作权（软著）申请**的材料清单与建议，请参阅：
+
+👉 [docs/overview-and-copyright.md](docs/overview-and-copyright.md)
