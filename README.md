@@ -94,3 +94,7 @@ $$
 以此提取 CLS token 对于各个 Patch 的注意力权重，并在后续放大为可视化热力图。
 
 更多详细理论和数学推导请参阅 [ATTENTION_EXTRACTION.md](ATTENTION_EXTRACTION.md)。
+
+## 🤖 关于 Copilot 助理
+
+本仓库使用了 GitHub Copilot 作为开发辅助工具。关于助理在对话中的身份、职责及使用边界（包括"不会替代人工审核"、"不会自动写入仓库"等说明），请参阅 [docs/assistant.md](docs/assistant.md)。
